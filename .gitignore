@@ -1,0 +1,8 @@
+*.class
+target/
+*.iml
+.idea/
+*.png
+*.html
+*.jpg
+*.txt
