@@ -3,52 +3,52 @@ package school.danceSite.controller;
 import org.springframework.web.bind.annotation.*;
 import school.danceSite.dao.entity.Client;
 import school.danceSite.dao.entityservice.ClientService;
-import school.danceSite.service.EmailSenderService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/clients")
 public class ClientController {
 
-    private final EmailSenderService emailSenderService;
     private final ClientService clientService;
 
-    public ClientController(EmailSenderService emailSenderService, ClientService clientService) {
-        this.emailSenderService = emailSenderService;
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
     }
 
-    @GetMapping("/clients")
+    @GetMapping
     public List<Client> allClients() {
         return clientService.getClients();
     }
 
-    @PostMapping("/addclient") // добавить проверку на повторяющиеся записи
+    @PostMapping // реализовать через маппер
     public String addClient(@RequestBody Client body) {
-        if (body.getId() != null) {//нужна проверка на бади при создании сущности
+        if (body.getId() != null) {
             return String.format("id is not allowed here, but received id = %s.", body.getId());
+        } else if (clientService.credentialsExist(body)) {
+            return "Client with such email or contact number already exists.";
         }
         clientService.createClient(body);
         return "Successfully added!";
     }
 
-    @PutMapping("/updateclient{id}")
-    public String updateClient(@PathVariable Long id, @RequestBody Client client) {
+    @PutMapping("/{id}")//реализовать через маппер
+    public String updateClient(@PathVariable Long id, @RequestBody Client body) {
         if (clientService.getById(id) == null) {
             return String.format("Client with id = %s doesn't exist!", id);
+        } else if (clientService.credentialsExist(body)) {
+            return "Client with such email or contact number already exists.";
         }
-        clientService.updateClient(id, client);
+        clientService.updateClient(id, body);
         return "Successfully updated!";
     }
 
-    @DeleteMapping("/deleteclient{id}")
+    @DeleteMapping("/{id}")
     public String deleteClient(@PathVariable Long id) {
-        Client client = clientService.getById(id);
-        if (client == null) {
+        if (clientService.getById(id) == null) {
             return "This user doesn't exist!";
         }
-        clientService.deleteClient(client);
+        clientService.deleteById(id);
         return "Successfully deleted!";
     }
 }

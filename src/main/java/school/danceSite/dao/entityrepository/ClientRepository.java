@@ -26,14 +26,11 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query(value = "SELECT SETVAL('client_id_seq', (SELECT MAX(id) FROM client));", nativeQuery = true)
     Long setMaxAutoIncrement();
 
-    @Query(value = "SELECT * FROM client " +
-            "WHERE id = :id ;",
-            nativeQuery = true)
-    Client findClientById(Long id);
-
     @Modifying//these 2 annotations are used to tell spring, that this query changes smth in DB
     @Transactional
     @Query(value = "UPDATE smth set",
             nativeQuery = true)
     void customUpdateMethod();
+
+    Client findByContactNumberAndEmail(String contactNumber, String email);
 }

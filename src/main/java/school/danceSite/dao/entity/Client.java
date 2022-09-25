@@ -27,10 +27,10 @@ public class Client {
     @NotEmpty(message = "client name must be not empty")
     private String clientname;
 
-    @Column(name = "phonenumber")
+    @Column(name = "contactnumber")
     @Size(min = 10, max = 16, message = "too short or long telephone number")
     @NotEmpty(message = "client name must be not empty")
-    private String phoneNumber;
+    private String contactNumber;
 
     @Column(name = "email")
     @NotEmpty(message = "email must be not empty")

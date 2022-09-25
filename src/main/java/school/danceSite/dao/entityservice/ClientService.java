@@ -5,6 +5,7 @@ import school.danceSite.dao.entity.Client;
 import school.danceSite.dao.entityrepository.ClientRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -19,8 +20,7 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    /*next 4 methods are single CRUD operations*/
-    public Client createClient(Client client) {//create
+    public Client createClient(Client client) {
         Client clientToBeSaved;
         synchronized (this) {
             Boolean missedIdExists = clientRepository.missedIdExists();
@@ -36,17 +36,25 @@ public class ClientService {
         return clientToBeSaved;
     }
 
-    public Client getById(Long id) {//read
-        return clientRepository.findClientById(id);
+    public Client getById(Long id) {
+        Optional<Client> client = clientRepository.findById(id);
+        return client.orElse(null);
     }
 
-    public void updateClient(Long id, Client client) {//update
-        Client clientToBeUpdated = client;
+    public Client getByContactNumberAndEmail(String contactNumber, String email) {
+        return clientRepository.findByContactNumberAndEmail(contactNumber, email);
+    }
+
+    public void updateClient(Long id, Client client) {
         client.setId(id);
-        clientRepository.save(clientToBeUpdated);
+        clientRepository.save(client);
     }
 
-    public void deleteClient(Client client) {//delete
-        clientRepository.deleteById(client.getId());
+    public void deleteById(Long id) {
+        clientRepository.deleteById(id);
+    }
+
+    public boolean credentialsExist(Client client) {
+        return getByContactNumberAndEmail(client.getContactNumber(), client.getEmail()) != null;
     }
 }
