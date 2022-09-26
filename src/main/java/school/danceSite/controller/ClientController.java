@@ -1,8 +1,11 @@
 package school.danceSite.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import school.danceSite.controller.view.ClientView;
+import school.danceSite.controller.view.mapper.ClientMapper;
 import school.danceSite.dao.entity.Client;
-import school.danceSite.dao.entityservice.ClientService;
+import school.danceSite.dao.entityService.ClientService;
 
 import java.util.List;
 
@@ -10,9 +13,11 @@ import java.util.List;
 @RequestMapping("/clients")
 public class ClientController {
 
+    private final ClientMapper clientMapper;
     private final ClientService clientService;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientMapper clientMapper, ClientService clientService) {
+        this.clientMapper = clientMapper;
         this.clientService = clientService;
     }
 
@@ -21,34 +26,26 @@ public class ClientController {
         return clientService.getClients();
     }
 
-    @PostMapping // реализовать через маппер
-    public String addClient(@RequestBody Client body) {
-        if (body.getId() != null) {
-            return String.format("id is not allowed here, but received id = %s.", body.getId());
-        } else if (clientService.credentialsExist(body)) {
-            return "Client with such email or contact number already exists.";
-        }
-        clientService.createClient(body);
-        return "Successfully added!";
+    @GetMapping("/{id}")
+    public Client getClient(@PathVariable Long id) {
+        return clientService.getById(id);
     }
 
-    @PutMapping("/{id}")//реализовать через маппер
-    public String updateClient(@PathVariable Long id, @RequestBody Client body) {
-        if (clientService.getById(id) == null) {
-            return String.format("Client with id = %s doesn't exist!", id);
-        } else if (clientService.credentialsExist(body)) {
-            return "Client with such email or contact number already exists.";
-        }
-        clientService.updateClient(id, body);
-        return "Successfully updated!";
+    @PostMapping
+    public Client addClient(@RequestBody ClientView body) {
+        Client client = clientMapper.mapFromView(body);
+        return clientService.createClient(client);
     }
 
+    @PutMapping("/{id}")
+    public Client updateClient(@PathVariable Long id, @RequestBody ClientView body) {
+        Client client = clientMapper.mapFromView(body);
+        return clientService.updateClient(id, client);
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Successfully deleted.")
     @DeleteMapping("/{id}")
-    public String deleteClient(@PathVariable Long id) {
-        if (clientService.getById(id) == null) {
-            return "This user doesn't exist!";
-        }
+    public void deleteClient(@PathVariable Long id) {
         clientService.deleteById(id);
-        return "Successfully deleted!";
     }
 }

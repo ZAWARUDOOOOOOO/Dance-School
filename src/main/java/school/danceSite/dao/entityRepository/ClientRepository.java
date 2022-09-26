@@ -1,4 +1,4 @@
-package school.danceSite.dao.entityrepository;
+package school.danceSite.dao.entityRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,5 +32,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             nativeQuery = true)
     void customUpdateMethod();
 
-    Client findByContactNumberAndEmail(String contactNumber, String email);
+    Boolean existsByContactNumberOrEmail(String contactNumber, String email);
+
+    @Query(value = "SELECT EXISTS(SELECT * FROM client WHERE id <> ?1 AND (contactNumber = ?2 OR email = ?3 ));", nativeQuery = true)
+    Boolean areNewCredUnique(Long id, String contactNumber, String email);
 }
