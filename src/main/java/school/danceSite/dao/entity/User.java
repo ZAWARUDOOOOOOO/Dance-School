@@ -1,6 +1,7 @@
 package school.danceSite.dao.entity;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@RequiredArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -23,6 +25,6 @@ public class User {
     @Column
     private String password;
 
-    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new LinkedHashSet<>();
 }

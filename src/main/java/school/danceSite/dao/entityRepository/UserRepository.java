@@ -1,4 +1,4 @@
-package school.danceSite.dao.entityrepository;
+package school.danceSite.dao.entityRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
