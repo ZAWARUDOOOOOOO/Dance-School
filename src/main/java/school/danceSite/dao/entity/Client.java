@@ -1,9 +1,6 @@
 package school.danceSite.dao.entity;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -12,10 +9,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@RequiredArgsConstructor
-@ToString
+@Data
 public class Client {
 
     @Id
@@ -27,7 +21,7 @@ public class Client {
     @NotEmpty(message = "client name must be not empty")
     private String clientname;
 
-    @Column(name = "contactnumber")
+    @Column(name = "contactnumber")//добавить валидацию по шаблонам номеров
     @Size(min = 10, max = 16, message = "too short or long telephone number")
     @NotEmpty(message = "client name must be not empty")
     private String contactNumber;
@@ -42,5 +36,8 @@ public class Client {
     private PassStatus passStatus;
 
     @Column(name = "lastappealdate")
-    private LocalDate lastAppealDate;//для очистки базы клиентов если перестали ходить
+    private LocalDate lastAppealDate;
+
+    @Version
+    private Integer version;
 }

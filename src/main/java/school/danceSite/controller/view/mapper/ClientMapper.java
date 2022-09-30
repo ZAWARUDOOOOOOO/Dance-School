@@ -7,7 +7,7 @@ import school.danceSite.dao.entity.Client;
 @Component
 public class ClientMapper {
 
-    public ClientView mapToView(Client client){
+    public ClientView mapToView(Client client) {
         ClientView clientView = new ClientView();
         clientView.setClientname(client.getClientname());
         clientView.setContactNumber(client.getContactNumber());
@@ -15,7 +15,7 @@ public class ClientMapper {
         return clientView;
     }
 
-    public Client mapFromView(ClientView clientView){
+    public Client mapFromView(ClientView clientView) {
         Client client = new Client();
         client.setClientname(clientView.getClientname());
         client.setContactNumber(clientView.getContactNumber());

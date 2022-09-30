@@ -1,11 +1,14 @@
 package school.danceSite.dao.entityRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import school.danceSite.dao.entity.Client;
+
+import javax.persistence.LockModeType;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
@@ -36,4 +39,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query(value = "SELECT EXISTS(SELECT * FROM client WHERE id <> ?1 AND (contactNumber = ?2 OR email = ?3 ));", nativeQuery = true)
     Boolean areNewCredUnique(Long id, String contactNumber, String email);
+
+    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+    Client save(Client client);
 }

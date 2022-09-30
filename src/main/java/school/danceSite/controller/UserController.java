@@ -11,7 +11,6 @@ import school.danceSite.dao.entityService.UserRoleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -49,7 +48,6 @@ public class UserController {
 
     @GetMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("here");
         TokenRefresher refresher = new TokenRefresher(service);
         refresher.refreshToken(request, response);
     }

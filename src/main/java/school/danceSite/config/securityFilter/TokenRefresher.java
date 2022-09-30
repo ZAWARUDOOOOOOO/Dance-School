@@ -31,7 +31,6 @@ public class TokenRefresher {
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        System.out.println(authorizationHeader);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
@@ -42,7 +41,7 @@ public class TokenRefresher {
                 User user = service.getUser(username);
                 String access_token = JWT.create()
                         .withSubject(user.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))//просрочится через 10 минут
+                        .withExpiresAt(new Date(System.currentTimeMillis() + 2 * 60 * 1000))//просрочится через 10 минут
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", user.getRoles().stream()
                                 .map(Role::getName)

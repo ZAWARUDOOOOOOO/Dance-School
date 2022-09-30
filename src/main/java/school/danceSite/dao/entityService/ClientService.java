@@ -2,8 +2,9 @@ package school.danceSite.dao.entityService;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import school.danceSite.config.exceptionProcessing.apiExceptions.CredentialsExistException;
+import org.springframework.transaction.annotation.Transactional;
 import school.danceSite.config.exceptionProcessing.apiExceptions.ClientNotFoundException;
+import school.danceSite.config.exceptionProcessing.apiExceptions.CredentialsExistException;
 import school.danceSite.dao.entity.Client;
 import school.danceSite.dao.entityRepository.ClientRepository;
 
@@ -23,23 +24,22 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
+    @Transactional
     public Client createClient(Client client) {
         Client clientToBeSaved;
-        synchronized (this) {
-            if (clientRepository.existsByContactNumberOrEmail(
-                    client.getContactNumber(), client.getEmail())
-            ) {
-                throw new CredentialsExistException("Such email or contact number is already taken.");
-            }
-            Boolean missedIdExists = clientRepository.missedIdExists();
-            missedIdExists = missedIdExists == null || missedIdExists;
-            if (missedIdExists) {
-                clientRepository.setAutoIncrement(clientRepository.getFirstMissedId());
-            }
-            clientToBeSaved = clientRepository.save(client);
-            if (missedIdExists) {
-                clientRepository.setMaxAutoIncrement();
-            }
+        if (clientRepository.existsByContactNumberOrEmail(
+                client.getContactNumber(), client.getEmail())
+        ) {
+            throw new CredentialsExistException("Such email or contact number is already taken.");
+        }
+        Boolean missedIdExists = clientRepository.missedIdExists();
+        missedIdExists = missedIdExists == null || missedIdExists;
+        if (missedIdExists) {
+            clientRepository.setAutoIncrement(clientRepository.getFirstMissedId());
+        }
+        clientToBeSaved = clientRepository.save(client);
+        if (missedIdExists) {
+            clientRepository.setMaxAutoIncrement();
         }
         return clientToBeSaved;
     }
@@ -51,6 +51,7 @@ public class ClientService {
         );
     }
 
+    @Transactional
     public Client updateClient(Long id, Client client) {
         Client clientToBeUpdated = getById(id);
         if (clientRepository.areNewCredUnique(
@@ -58,11 +59,10 @@ public class ClientService {
         ) {
             throw new CredentialsExistException("Such email or contact number is already taken.");
         }
-        clientToBeUpdated.setClientname(clientToBeUpdated.getClientname());
+        clientToBeUpdated.setClientname(client.getClientname());
         clientToBeUpdated.setContactNumber(client.getContactNumber());
         clientToBeUpdated.setEmail(client.getEmail());
-        clientRepository.save(clientToBeUpdated);
-        return clientToBeUpdated;
+        return clientRepository.save(clientToBeUpdated);
     }
 
     public void deleteById(Long id) {

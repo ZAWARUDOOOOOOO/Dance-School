@@ -33,6 +33,6 @@ public class Pass {
 
     @Column(name = "passcost")
     @NotEmpty(message = "cost can't be empty")
-    @Min(value = 2500,message = "too low cost has chosen")
+    @Min(value = 2500, message = "too low cost has chosen")
     private Long passCost;
 }
