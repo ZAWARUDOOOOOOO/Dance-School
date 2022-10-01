@@ -44,7 +44,7 @@ public class ClientService {
         return clientToBeSaved;
     }
 
-    public Client getById(Long id) {
+    public Client getById(Long id) throws ClientNotFoundException {
         Optional<Client> client = clientRepository.findById(id);
         return client.orElseThrow(() -> new ClientNotFoundException(
                 String.format("Client with id = %s doesn't exist!", id))

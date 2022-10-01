@@ -1,11 +1,14 @@
 package school.danceSite.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.danceSite.config.exceptionProcessing.apiExceptions.ClientNotFoundException;
 import school.danceSite.controller.view.ClientView;
 import school.danceSite.controller.view.mapper.ClientMapper;
 import school.danceSite.dao.entity.Client;
 import school.danceSite.dao.entityService.ClientService;
+import school.danceSite.utils.ErrorDescription;
 
 import java.util.List;
 
@@ -27,8 +30,13 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public Client getClient(@PathVariable Long id) {
-        return clientService.getById(id);
+    public ResponseEntity<?> getClient(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(clientService.getById(id));
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorDescription.builder().userMessage("Client not found"));
+        }
     }
 
     @PostMapping
