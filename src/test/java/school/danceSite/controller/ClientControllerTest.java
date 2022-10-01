@@ -81,7 +81,7 @@ public class ClientControllerTest {
         // when
         List<Client> actualClients = clientController.allClients();
         // then
-        assertEquals(expectedClients, actualClients, "Should return empty list when no clients");
+        assertEquals(expectedClients, actualClients, "Should return expected clients list");
     }
 
 }
